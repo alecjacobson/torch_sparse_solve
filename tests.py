@@ -33,7 +33,7 @@ def b(gen):
 
 def test_gradcheck(A, b):
     """ check if backward grads are correct """
-    torch.autograd.gradcheck(torch_sparse_solve.solve, [A, b], check_sparse_nnz=True, check_undefined_grad=False)
+    torch.autograd.gradcheck(torch_sparse_solve.solve, [A, b], check_undefined_grad=False)
 
 
 def test_result(A, b):
@@ -49,7 +49,7 @@ def test_result(A, b):
 def test_comparison_with_torch_solve(A, b):
     """ compare with dense torch.solve """
     x_sparse = torch_sparse_solve.solve(A, b)
-    x_dense = torch.solve(b, A.to_dense())[0]
+    x_dense = torch.linalg.solve(A.to_dense(),b)
     numpy.testing.assert_almost_equal(
         x_sparse.data.cpu().numpy(), x_dense.data.cpu().numpy()
     )
@@ -87,7 +87,7 @@ def test_coo_to_csc():
 
 
 def test_sparse_solver(A, b):
-    target = torch.solve(b, A.to_dense())[0][0, :, 0]
+    target = torch.linalg.solve(A.to_dense(),b)[0,:,0]
     result = b[0, :, 0].clone()
     Ai = A[0]._indices()[0].int()
     Aj = A[0]._indices()[1].int()

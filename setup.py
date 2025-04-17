@@ -3,15 +3,19 @@ import glob
 from setuptools import setup, Extension
 from torch.utils import cpp_extension
 
-import torch_sparse_solve
+VERSION = "0.0.5"
+AUTHOR = "Floris Laporte"
+DESCRIPTION = "Solve sparse linear systems in PyTorch using KLU"
+
 
 libroot = os.path.dirname(os.path.dirname(os.__file__))
 if os.name == "nt":  # Windows
     suitesparse_lib = os.path.join(libroot, "Library", "lib")
     suitesparse_include = os.path.join(libroot, "Library", "include", "suitesparse")
-else:  # Linux / Mac OS
-    suitesparse_lib = os.path.join(os.path.dirname(libroot), "lib")
-    suitesparse_include = os.path.join(os.path.dirname(libroot), "include")
+else:  # macOS/Homebrew
+    suitesparse_lib = "/opt/homebrew/lib"
+    suitesparse_include = "/opt/homebrew/Cellar/suite-sparse/7.10.2/include/suitesparse"
+
 
 torch_sparse_solve_cpp = Extension(
     name="torch_sparse_solve_cpp",
@@ -41,10 +45,10 @@ except FileNotFoundError:
 
 setup(
     name="torch_sparse_solve",
-    version=torch_sparse_solve.__version__,
-    author=torch_sparse_solve.__author__,
+    version=VERSION,
+    author=AUTHOR,
     author_email="floris.laporte@gmail.com",
-    description=torch_sparse_solve.__doc__,
+    description=DESCRIPTION,
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/flaport/torch_sparse_solve",
